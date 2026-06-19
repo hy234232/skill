@@ -1,0 +1,3 @@
+display_name: Policy Generator
+short_description: Create Korean policy MD files with a standard structure and concise filename.
+default_prompt: 정책 원문을 표준 7단 구조로 정리하고 파일명은 policy 단어 없이 <주제>.md 형식으로 만들며 변경 이력 작성자는 Codex, 김혜연으로 작성해줘.

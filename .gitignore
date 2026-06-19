@@ -1,0 +1,14 @@
+# OS
+.DS_Store
+**/.DS_Store
+
+# only track the three authoring skills
+/*
+!/.gitignore
+!/component-generator/
+!/feature-generator/
+!/policy-generator/
+
+# python caches inside tracked skills
+**/__pycache__/
+*.pyc
