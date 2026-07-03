@@ -1,0 +1,4 @@
+interface:
+  display_name: "Write Feature Spec"
+  short_description: "Create feature specs from a reference 기능명세서 format."
+  default_prompt: "기능명세서 파일과 텍스트 입력을 주면, 원본 파일의 테이블 항목·문체·길이감·표 형식을 유지해 새 기능명세서를 작성합니다."
