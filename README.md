@@ -11,6 +11,7 @@
 | `component-generator` | Figma/스크린샷/메모 기반 UI 컴포넌트 명세 MD 작성 | `SKILL.md` |
 | `write-feature-spec` | 기존 기능명세서 형식과 톤을 기준으로 새 기능명세서 작성 | `references/feature_spec_style.md`, `scripts/`, `agents/openai.yaml` |
 | `figma` | Figma MCP 기반 디자인 컨텍스트 수집, 디자인-코드 구현 지원 | `references/`, `assets/`, `agents/openai.yaml` |
+| `pptx-automation` | 텍스트/기존 PPTX 기반 발표자료 제작·개선, PPTX/HTML/PDF 출력 흐름 지원 | `references/`, `scripts/`, `agents/openai.yaml` |
 
 ## 설치
 
@@ -34,6 +35,7 @@ rsync -a skills/feature-generator/ ~/.codex/skills/feature-generator/
 $feature-generator로 이 회의록을 기능명세서.md로 만들어줘.
 $policy-generator로 알림 정책 문서를 표준 구조로 정리해줘.
 $component-generator로 이 Figma 컴포넌트를 개발자가 구현 가능한 MD로 정리해줘.
+$pptx-automation으로 이 텍스트를 회사소개서 PPTX와 PDF로 만들어줘.
 ```
 
 ## 관리 원칙

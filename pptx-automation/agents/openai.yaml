@@ -1,0 +1,4 @@
+interface:
+  display_name: "PPTX Automation"
+  short_description: "텍스트와 PPTX를 발표자료로 자동 제작합니다"
+  default_prompt: "Use $pptx-automation to turn my text or existing deck into a polished PPTX, PDF, and HTML deliverable."
