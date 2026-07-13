@@ -1,0 +1,13 @@
+{
+  "name": "Your Company",
+  "primary": "#1F4E79",
+  "secondary": "#22A699",
+  "accent": "#F2C94C",
+  "font_family": "Aptos",
+  "website": "https://example.com",
+  "email": "contact@example.com",
+  "phone": "",
+  "footer_text": "Your Company",
+  "logo_path": "",
+  "tone": "professional, clear, proposal-ready"
+}

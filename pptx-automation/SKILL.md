@@ -14,7 +14,7 @@ description: Create, improve, and verify presentation deliverables from raw text
    - Company introduction: self/third-party profile, solution technology, history, organization, revenue.
    - Project proposal: government task, B2B customer proposal, solution proposal, selected-page customization.
    - Presentation cleanup: readability, visual hierarchy, consistency, summarization.
-3. Ask only for missing essentials that materially affect the result: document type, brand color, company/project name, logo/template if required, and whether uncertain facts should remain blank or be marked as TODO.
+3. Load brand defaults from `assets/brand-profile.json` when present, then ask only for missing essentials that materially affect the result: document type, one-time brand override, company/project name, logo/template if required, and whether uncertain facts should remain blank or be marked as TODO.
 4. Build a slide outline first. Each slide must have one main message, a title, optional subtitle, and a body type such as bullets, cards, table, timeline, comparison, process, or closing CTA.
 5. Create editable PPTX, export PDF, and create an HTML preview or review file when requested or useful.
 6. Render and visually inspect the output before finishing. Iterate until text fits, hierarchy is clear, slides open, and PDF layout matches the PPTX.
@@ -28,7 +28,7 @@ description: Create, improve, and verify presentation deliverables from raw text
 - Preserve semantic meaning when improving an existing PPTX; simplify phrasing and layout without changing facts.
 - Keep PPTX objects editable: use text boxes, shapes, tables, and image placeholders instead of flattening whole slides into screenshots.
 - Apply a consistent grid, font scale, color palette, spacing, and section structure.
-- Use the brand main color and optional secondary color. If no brand colors are provided, choose a restrained professional palette and state the assumption.
+- Use the saved brand profile first, then apply any request-specific brand overrides. If no brand colors are available, choose a restrained professional palette and state the assumption.
 - Avoid complex animation, video, motion graphics, and unlicensed external imagery unless the user explicitly asks and provides assets.
 
 ## Document Blueprints
@@ -41,6 +41,31 @@ Read `references/deck-blueprints.md` when choosing slide order, section structur
 - presentation readability cleanup
 
 Use the blueprint as a starting point, then adapt to the actual source material.
+
+## Brand Profile
+
+Use `assets/brand-profile.json` as the reusable default brand source. It may include:
+
+- `name`
+- `primary`
+- `secondary`
+- `accent`
+- `font_family`
+- `website`
+- `email`
+- `phone`
+- `footer_text`
+- `logo_path`
+- `tone`
+
+Brand precedence:
+
+1. One-time user request overrides, such as "use blue instead today" or a project-specific brand file.
+2. The outline JSON `brand` object.
+3. `assets/brand-profile.json`.
+4. Script fallback colors.
+
+For permanent brand changes, update `assets/brand-profile.json`. For one-time changes, keep the saved profile intact and add a `brand` object to the outline or pass `--brand-profile path/to/project-brand.json` to the script.
 
 ## Text to Deck
 
@@ -99,6 +124,18 @@ The script expects JSON like:
     {"type": "closing", "title": "Next step", "subtitle": "Confirm scope and pilot schedule"}
   ]
 }
+```
+
+To use a different brand for only one deck:
+
+```bash
+python3 scripts/outline_to_pptx.py outline.json --brand-profile project-brand.json --out dist/deck.pptx
+```
+
+To override a single brand value from the command line. When `name` is overridden without `footer_text`, the footer follows the new name:
+
+```bash
+python3 scripts/outline_to_pptx.py outline.json --brand primary=#003A70 --brand name="Client Proposal" --out dist/deck.pptx
 ```
 
 The script can export PDF only when LibreOffice or `soffice` is available. If PDF conversion fails, report that PPTX and HTML were generated and explain the missing converter.

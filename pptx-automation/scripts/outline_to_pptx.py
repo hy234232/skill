@@ -20,6 +20,44 @@ from pptx.util import Inches, Pt
 SLIDE_W = 13.333
 SLIDE_H = 7.5
 MARGIN = 0.58
+DEFAULT_BRAND_PROFILE = Path(__file__).resolve().parents[1] / "assets" / "brand-profile.json"
+
+
+def load_json(path: Path) -> dict[str, Any]:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def load_brand(path: Path | None) -> dict[str, Any]:
+    brand_path = path or DEFAULT_BRAND_PROFILE
+    if brand_path.exists():
+        return load_json(brand_path)
+    return {}
+
+
+def parse_brand_override(raw: str) -> tuple[str, str]:
+    if "=" not in raw:
+        raise argparse.ArgumentTypeError("Brand override must use key=value format.")
+    key, value = raw.split("=", 1)
+    key = key.strip()
+    if not key:
+        raise argparse.ArgumentTypeError("Brand override key cannot be empty.")
+    return key, value.strip()
+
+
+def merge_brand(data: dict[str, Any], profile: dict[str, Any], overrides: list[tuple[str, str]] | None) -> dict[str, Any]:
+    merged = dict(profile)
+    outline_brand = data.get("brand") or {}
+    merged.update(outline_brand)
+    override_keys = set()
+    for key, value in overrides or []:
+        merged[key] = value
+        override_keys.add(key)
+    if "name" in outline_brand and "footer_text" not in outline_brand and "footer_text" not in override_keys:
+        merged["footer_text"] = outline_brand["name"]
+    if "name" in override_keys and "footer_text" not in override_keys:
+        merged["footer_text"] = merged["name"]
+    data["brand"] = merged
+    return merged
 
 
 def parse_color(value: str | None, fallback: str) -> RGBColor:
@@ -50,11 +88,14 @@ def add_title(slide, title: str, subtitle: str | None, primary: RGBColor):
         add_text(sub_box, subtitle, 12, False, RGBColor(85, 95, 110))
 
 
-def add_footer(slide, index: int, primary: RGBColor):
+def add_footer(slide, index: int, primary: RGBColor, footer_text: str = ""):
     line = slide.shapes.add_shape(1, Inches(MARGIN), Inches(7.02), Inches(12.15), Inches(0.02))
     line.fill.solid()
     line.fill.fore_color.rgb = RGBColor(220, 225, 232)
     line.line.fill.background()
+    if footer_text:
+        footer = slide.shapes.add_textbox(Inches(MARGIN), Inches(6.86), Inches(6.4), Inches(0.25))
+        add_text(footer, footer_text, 8, False, RGBColor(120, 132, 150))
     page = slide.shapes.add_textbox(Inches(12.18), Inches(6.86), Inches(0.55), Inches(0.25))
     tf = add_text(page, f"{index:02d}", 8, True, primary)
     tf.paragraphs[0].alignment = PP_ALIGN.RIGHT
@@ -64,7 +105,7 @@ def blank_slide(prs: Presentation):
     return prs.slides.add_slide(prs.slide_layouts[6])
 
 
-def add_cover(prs: Presentation, slide_data: dict[str, Any], primary: RGBColor, secondary: RGBColor):
+def add_cover(prs: Presentation, slide_data: dict[str, Any], brand: dict[str, Any], primary: RGBColor, secondary: RGBColor):
     slide = blank_slide(prs)
     bg = slide.shapes.add_shape(1, Inches(0), Inches(0), Inches(SLIDE_W), Inches(SLIDE_H))
     bg.fill.solid()
@@ -80,7 +121,7 @@ def add_cover(prs: Presentation, slide_data: dict[str, Any], primary: RGBColor, 
     if subtitle:
         sub = slide.shapes.add_textbox(Inches(0.88), Inches(3.45), Inches(8.8), Inches(0.55))
         add_text(sub, subtitle, 16, False, RGBColor(235, 240, 246))
-    meta = slide_data.get("meta") or slide_data.get("company") or ""
+    meta = slide_data.get("meta") or slide_data.get("company") or brand.get("name") or ""
     if meta:
         box = slide.shapes.add_textbox(Inches(0.9), Inches(5.72), Inches(6.5), Inches(0.35))
         add_text(box, str(meta), 11, False, RGBColor(235, 240, 246))
@@ -118,16 +159,16 @@ def add_bullets(slide, bullets: list[Any], x: float, y: float, w: float, h: floa
         p.space_after = Pt(8)
 
 
-def add_content(prs: Presentation, slide_data: dict[str, Any], primary: RGBColor, index: int):
+def add_content(prs: Presentation, slide_data: dict[str, Any], brand: dict[str, Any], primary: RGBColor, index: int):
     slide = blank_slide(prs)
     add_title(slide, slide_data.get("title", ""), slide_data.get("subtitle"), primary)
     body = slide_data.get("body")
     bullets = slide_data.get("bullets") or ([] if body is None else [body])
     add_bullets(slide, bullets, MARGIN + 0.1, 1.85, 11.6, 4.7)
-    add_footer(slide, index, primary)
+    add_footer(slide, index, primary, str(brand.get("footer_text") or brand.get("name") or ""))
 
 
-def add_cards(prs: Presentation, slide_data: dict[str, Any], primary: RGBColor, secondary: RGBColor, index: int):
+def add_cards(prs: Presentation, slide_data: dict[str, Any], brand: dict[str, Any], primary: RGBColor, secondary: RGBColor, index: int):
     slide = blank_slide(prs)
     add_title(slide, slide_data.get("title", ""), slide_data.get("subtitle"), primary)
     cards = slide_data.get("cards") or []
@@ -146,10 +187,10 @@ def add_cards(prs: Presentation, slide_data: dict[str, Any], primary: RGBColor, 
         add_text(title, str(card.get("title", "")), 15, True, primary)
         body = slide.shapes.add_textbox(Inches(x + 0.2), Inches(y + 0.72), Inches(card_w - 0.4), Inches(0.95))
         add_text(body, str(card.get("body", "")), 11, False, RGBColor(55, 65, 81))
-    add_footer(slide, index, primary)
+    add_footer(slide, index, primary, str(brand.get("footer_text") or brand.get("name") or ""))
 
 
-def add_table(prs: Presentation, slide_data: dict[str, Any], primary: RGBColor, index: int):
+def add_table(prs: Presentation, slide_data: dict[str, Any], brand: dict[str, Any], primary: RGBColor, index: int):
     slide = blank_slide(prs)
     add_title(slide, slide_data.get("title", ""), slide_data.get("subtitle"), primary)
     table_data = slide_data.get("table") or {}
@@ -174,10 +215,10 @@ def add_table(prs: Presentation, slide_data: dict[str, Any], primary: RGBColor, 
             for p in cell.text_frame.paragraphs:
                 p.font.size = Pt(9)
                 p.font.color.rgb = RGBColor(42, 49, 60)
-    add_footer(slide, index, primary)
+    add_footer(slide, index, primary, str(brand.get("footer_text") or brand.get("name") or ""))
 
 
-def add_closing(prs: Presentation, slide_data: dict[str, Any], primary: RGBColor, secondary: RGBColor, index: int):
+def add_closing(prs: Presentation, slide_data: dict[str, Any], brand: dict[str, Any], primary: RGBColor, secondary: RGBColor, index: int):
     slide = blank_slide(prs)
     band = slide.shapes.add_shape(1, Inches(0), Inches(0), Inches(SLIDE_W), Inches(SLIDE_H))
     band.fill.solid()
@@ -188,11 +229,17 @@ def add_closing(prs: Presentation, slide_data: dict[str, Any], primary: RGBColor
     if slide_data.get("subtitle"):
         sub = slide.shapes.add_textbox(Inches(1.12), Inches(3.55), Inches(8.4), Inches(0.45))
         add_text(sub, slide_data["subtitle"], 15, False, RGBColor(55, 65, 81))
+    contact = slide_data.get("contact") or " | ".join(
+        item for item in [brand.get("email", ""), brand.get("website", ""), brand.get("phone", "")] if item
+    )
+    if contact:
+        contact_box = slide.shapes.add_textbox(Inches(1.12), Inches(4.08), Inches(8.4), Inches(0.35))
+        add_text(contact_box, str(contact), 10, False, RGBColor(85, 95, 110))
     rule = slide.shapes.add_shape(1, Inches(1.12), Inches(4.38), Inches(2.2), Inches(0.08))
     rule.fill.solid()
     rule.fill.fore_color.rgb = secondary
     rule.line.fill.background()
-    add_footer(slide, index, primary)
+    add_footer(slide, index, primary, str(brand.get("footer_text") or brand.get("name") or ""))
 
 
 def build_pptx(data: dict[str, Any], out_path: Path):
@@ -208,17 +255,17 @@ def build_pptx(data: dict[str, Any], out_path: Path):
     for index, slide_data in enumerate(slides, start=1):
         kind = (slide_data.get("type") or "content").lower()
         if kind == "cover":
-            add_cover(prs, slide_data, primary, secondary)
+            add_cover(prs, slide_data, brand, primary, secondary)
         elif kind == "section":
             add_section(prs, slide_data, primary, secondary, index)
         elif kind == "cards":
-            add_cards(prs, slide_data, primary, secondary, index)
+            add_cards(prs, slide_data, brand, primary, secondary, index)
         elif kind == "table":
-            add_table(prs, slide_data, primary, index)
+            add_table(prs, slide_data, brand, primary, index)
         elif kind == "closing":
-            add_closing(prs, slide_data, primary, secondary, index)
+            add_closing(prs, slide_data, brand, primary, secondary, index)
         else:
-            add_content(prs, slide_data, primary, index)
+            add_content(prs, slide_data, brand, primary, index)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     prs.save(out_path)
 
@@ -227,11 +274,12 @@ def write_html(data: dict[str, Any], out_path: Path):
     brand = data.get("brand") or {}
     primary = html.escape(brand.get("primary") or "#1F4E79")
     secondary = html.escape(brand.get("secondary") or "#22A699")
+    font_family = html.escape(brand.get("font_family") or "-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif")
     parts = [
         "<!doctype html><html><head><meta charset='utf-8'>",
         "<meta name='viewport' content='width=device-width, initial-scale=1'>",
         "<style>",
-        "body{margin:0;background:#eef2f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#263241}",
+        f"body{{margin:0;background:#eef2f7;font-family:{font_family};color:#263241}}",
         ".deck{max-width:1120px;margin:28px auto;padding:0 20px}.slide{aspect-ratio:16/9;background:white;margin:0 0 24px;padding:48px 56px;box-shadow:0 12px 34px rgba(15,23,42,.12);box-sizing:border-box}",
         f".cover{{background:{primary};color:white}}.section{{border-left:44px solid {primary}}}",
         f"h1{{margin:0 0 14px;font-size:34px;color:{primary}}}.cover h1{{color:white}}h2{{font-size:18px;color:#647083;margin:0 0 26px}}",
@@ -292,9 +340,12 @@ def main():
     parser.add_argument("--out", type=Path, required=True, help="Output PPTX path")
     parser.add_argument("--html", type=Path, help="Optional HTML preview path")
     parser.add_argument("--pdf", action="store_true", help="Also export PDF using LibreOffice/soffice")
+    parser.add_argument("--brand-profile", type=Path, help="Optional brand profile JSON. Defaults to assets/brand-profile.json when present.")
+    parser.add_argument("--brand", action="append", type=parse_brand_override, help="One-time brand override in key=value format. May be repeated.")
     args = parser.parse_args()
 
-    data = json.loads(args.outline.read_text(encoding="utf-8"))
+    data = load_json(args.outline)
+    merge_brand(data, load_brand(args.brand_profile), args.brand)
     build_pptx(data, args.out)
     if args.html:
         write_html(data, args.html)
