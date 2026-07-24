@@ -76,6 +76,7 @@ This is the core of the skill. The designer expresses intent in Figma; rewrite i
 - 시안에 "잘못된 예시"가 있으면 `Do & Don't` 표에 그대로 반영한다.
 - 스크롤/오버플로우/잘림 동작은 어느 영역에서 일어나는지 영역 단위로 명시한다.
 - Anatomy에는 가능하면 Figma 레이어명을 함께 적어 개발자가 시안과 코드를 매칭할 수 있게 한다.
+- Figma 원본 프레임명·레이어명이 한글, 대문자, 공백, 특수문자, 임시명(`Frame 123`, `확대 *모달` 등)으로 섞여 있으면 그대로 개발 기준명으로 쓰지 않는다. 퍼블리셔 기준 표에는 lowercase kebab-case로 통일한 이름을 작성한다. 예: `PC Web 이미지 확대 모달` → `pc-web-image-modal`, `Mobile App 클립 확대 시` → `mobile-app-clip-expanded`, `Close button` → `close-button`. 원본 Figma 매칭은 Node ID로 보존한다.
 - `Implementation Notes`에는 레이아웃 전략(flex/grid), 핵심 CSS 속성, 스크롤 컨테이너 위치 등 **개발 착수에 필요한 최소 힌트**를 제공한다.
 
 ## Spec & Token Rules
