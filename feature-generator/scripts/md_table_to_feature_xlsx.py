@@ -20,25 +20,13 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 SKILL_DIR = SCRIPT_DIR.parent
 TEMPLATE_PATH = SKILL_DIR / "assets" / "feature_xlsx_template.xlsx"
 
-HEADERS = [
-    "1depth",
-    "2depth",
-    "3depth",
-    "요구사항 ID",
-    "요구사항명",
-    "요청목적",
-    "기능 요구사항",
-    "프로세스 요구사항",
-    "화면 요구사항",
-    "보안 요구사항",
-    "데이터 요구사항",
-]
+HEADERS = ['요구사항 ID', '1depth', '2depth', '3depth', '요구사항명', '요청목적', '기능 요구사항', '프로세스 요구사항', '화면 요구사항', '보안 요구사항', '데이터 요구사항']
 
 COLUMN_WIDTHS = {
-    "A": 20.0,
-    "B": 24.0,
-    "C": 30.0,
-    "D": 21.6640625,
+    "A": 21.6640625,
+    "B": 20.0,
+    "C": 24.0,
+    "D": 30.0,
     "E": 42.83203125,
     "F": 39.1640625,
     "G": 74.1640625,
@@ -89,10 +77,10 @@ def extract_markdown_table(md_text: str) -> list[list[str]]:
     for block in table_blocks:
         rows = [split_md_row(line) for line in block]
         rows = [row for row in rows if row and not is_separator_row(row)]
-        if rows and rows[0][:3] == ["1depth", "2depth", "3depth"]:
+        if rows and "요구사항 ID" in rows[0] and "1depth" in rows[0] and "2depth" in rows[0] and "3depth" in rows[0]:
             return normalize_rows(rows)
 
-    raise ValueError("No feature table with 1depth/2depth/3depth headers found")
+    raise ValueError("No feature table with 요구사항 ID/1depth/2depth/3depth headers found")
 
 
 def normalize_rows(rows: list[list[str]]) -> list[list[str]]:
