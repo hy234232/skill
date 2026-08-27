@@ -11,7 +11,7 @@ Feature MD output must be concise and table-first.
 id: {{문서_ID}}
 version: 1.0.0
 status: draft
-owner_team: AI Research team
+owner_team: AI Platform Team
 effective_date: {{YYYY-MM-DD}}
 ```
 

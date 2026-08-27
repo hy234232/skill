@@ -204,7 +204,7 @@ def build_markdown(source: Path, rows: list[list[str]]) -> str:
 id: {safe_id(title)}
 version: 1.0.0
 status: draft
-owner_team: AI Research team
+owner_team: AI Platform Team
 effective_date: {today}
 ```
 
