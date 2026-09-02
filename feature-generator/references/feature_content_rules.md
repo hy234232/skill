@@ -22,14 +22,7 @@ Writing rules:
 
 - Keep each row focused on one screen/action/rule.
 - Use short bullets inside cells.
-- Use familiar, direct words that a planner, designer, frontend developer, and backend developer can understand on first read.
-- Replace abstract expressions with the actual page, category, and function name.
-- In `1depth`, `2depth`, and `3depth`, use the visible page/category/function name whenever the source provides one.
-- Avoid ambiguous references such as `해당 화면`, `상위 페이지`, `관련 기능`, `해당 항목`, and `이 버튼`. Repeat the exact name when needed.
-- For every changed item, put the before/after pair before the detailed behavior in the relevant cell.
-- Use this format: `[페이지명 > 카테고리명 > 기능명] (변경 전) 기존 내용 → (변경 후) 새 내용`.
-- When the location is already unambiguous from `1depth`~`3depth`, the bracketed location may be omitted, but the `(변경 전) → (변경 후)` order is mandatory.
-- Split multiple changes into separate bullets; do not combine unrelated before/after pairs.
+- Use easy, direct words.
 - Prefer noun-style endings where natural.
 - Preserve source terminology.
 - Remove duplication and merge scattered requirements.

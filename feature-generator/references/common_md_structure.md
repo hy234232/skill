@@ -68,6 +68,10 @@ effective_date: {{YYYY-MM-DD}}
 
 Rules:
 
+- `owner_team` is always `AI Platform Team`. Do not copy a different team name from other documents.
+- Show Figma source links only when they materially help the reader or the user asks for them.
+- Use the original broad Figma link provided by the user. Do not generate separate links for individual frames, pages, subframes, or MCP-discovered nodes.
+- If a Figma source link is shown above `## 1. 목적·범위`, do not repeat the same Figma link in `## 4. 연관 링크`.
 - Write only `목적` and `범위` bullets.
 - Do not add IA summary, role summary, alert summary, status summary, or backend summary sections unless the user asks.
 - Use easy words and short noun-style endings.

@@ -10,21 +10,10 @@ Create concise Korean 기능명세서 files.
 ## Output Principle
 
 - Keep the MD short.
-- Use the easiest Korean that preserves the source meaning. Replace jargon and abstract wording with familiar words, and explain unavoidable terms once.
-- Make every rule understandable on first read. Name the exact page, category, and function instead of using vague phrases such as `해당 화면`, `관련 기능`, or `이 버튼`.
-- Prefer short noun-style endings such as `데이터 출처 정의`, not long `~한다` prose.
+- Use easy, clear Korean. Prefer short noun-style endings such as `데이터 출처 정의`, not long `~한다` prose.
 - Write only planning information needed for implementation.
 - Do not repeat the same rule in both the top section and the table unless it prevents misunderstanding.
 - FE/BE-owned details belong in FE/BE documents. Feature MD keeps only planning meaning.
-
-## Change Notation
-
-- Put a changed item before its detailed behavior in the relevant requirement row.
-- Start with the exact location using `페이지명 > 카테고리명 > 기능명` when more than one screen can be confused.
-- Use this exact order: `(변경 전) 기존 내용 → (변경 후) 새 내용`.
-- For multiple changes, write one before/after pair per bullet.
-- Example: `[QR 관리 > QR 그룹 상세 > 날짜 항목] (변경 전) 등록일 → (변경 후) 생성일`.
-- Do not create a separate repeated change-summary section when the same change already appears in the feature table.
 
 ## MD Structure
 
@@ -43,9 +32,15 @@ Use three `<br>` lines before each `##` heading.
 
 ## Top Source Links
 
+- Show Figma source links only when they materially help the reader or the user asks for them.
 - When a Figma source exists, place it immediately below the metadata block as a clickable Markdown link.
 - Do not put Figma URLs or Figma labels inside the metadata code block because links do not render there.
-- Use this format: `> Figma: [조달과제 건축현장안전관리 — 화면명](https://...)`
+- Use the original Figma link provided by the user as the source link.
+- Prefer the broad source link that gathers the relevant functions and screens in one place.
+- Do not create or expose additional Figma links for individual frames, pages, subframes, or MCP-discovered nodes.
+- If the Figma frame or page is later deleted, the MD should still rely on the stable user-provided source link, not generated per-frame links.
+- Use this format: `> Figma: [서비스명 — 출처명](https://...)`
+- If the top Figma source link already appears, do not repeat the same Figma link in `## 4. 연관 링크`.
 
 ## 목적·범위
 
@@ -108,12 +103,18 @@ Keep rows concise. Put detailed behavior in the relevant row, not in a repeated 
 - Use concise lowercase kebab-case: `<topic>.md`, `<topic>.xlsx`.
 - Do not include `feature`, `기능명세서`, dates, versions, `draft`, or `final`.
 
+## Metadata
+
+- Always write `owner_team: AI Platform Team` in the metadata block.
+- Never copy another team name (for example `AI Research team`) from neighboring or older documents. When editing an existing document whose metadata has a different `owner_team`, change it to `AI Platform Team`.
+
 ## Guardrails
 
 - Preserve source meaning; do not invent scope.
 - Do not invent API, DB, enum, event, state machine, component architecture, or permission models.
 - Use `TBD` or `원문 기준 추가 정의 필요` only when needed.
-- For Figma references, do not expose raw Figma URLs. Put the real URL behind Markdown link text near the top source link and in `## 4. 연관 링크`.
+- For Figma references, do not expose raw Figma URLs. Put the real URL behind Markdown link text only when the source link is needed.
+- Do not add per-frame, per-page, or per-node Figma links from MCP output. Use only the user-provided broad source link unless the user explicitly asks for a specific link.
 - When editing an existing document, preserve every existing change-history row.
 - Add the current work as the newest row at the top. Combine changes made on the same date into one complete row unless the user requests separate rows.
 - Never delete, shorten, reorder, or rewrite previous history without an explicit user request.
