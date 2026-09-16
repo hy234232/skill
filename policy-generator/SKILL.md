@@ -140,9 +140,9 @@ category: {{system | billing | legal | operation}}
 
 ## Change History Author Rules
 
-- For every policy document created or modified at 김혜연's request, always write `Codex, 김혜연` in the `작성자` column.
+- For every policy document created or modified at hy0909's request, always write `Codex, hy0909` in the `작성자` column.
 - Apply this author value to all change-history rows created or normalized during the task.
-- Do not use `AI Research team`, `개발팀`, or `Codex` alone as the change-history author for 김혜연's policy documents.
+- Do not use `AI Research team`, `개발팀`, or `Codex` alone as the change-history author for hy0909's policy documents.
 
 ## File Naming Rules
 

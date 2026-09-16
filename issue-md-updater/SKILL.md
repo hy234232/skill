@@ -37,7 +37,7 @@ Use this skill when a user asks to reflect one or more GitHub issues into existi
    - Delete obsolete feature text, add new behavior, and update changed rules in the most local section first, then summary tables and requirement rows.
    - Keep feature docs aligned with the `feature-generator` structure and policy docs aligned with the `policy-generator` structure when those skills are available.
    - Use `원문 기준 추가 정의 필요` for unresolved decisions instead of inventing implementation details.
-   - Update version metadata and add a change-history row using `Codex, 김혜연` when working for 김혜연.
+   - Update version metadata and add a change-history row using `Codex, hy0909` when working for hy0909.
 
 6. Validate consistency.
    - Run `rg` for stale terms that should have been removed or changed.

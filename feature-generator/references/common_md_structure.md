@@ -63,7 +63,7 @@ effective_date: {{YYYY-MM-DD}}
 
 | 버전 | 일자 | 변경 내용 | 작성자 |
 | --- | --- | --- | --- |
-| 1.0.0 | {{YYYY-MM-DD}} | 최초 작성 | Codex, 김혜연 |
+| 1.0.0 | {{YYYY-MM-DD}} | 최초 작성 | Codex, hy0909 |
 ````
 
 Rules:
